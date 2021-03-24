@@ -170,7 +170,7 @@ def parse(excel_data: pd.DataFrame,
                  "float": float,
                  "bool": bool,
                  "inv": involvement,
-                 "nothing": lambda *args: args}
+                 "nothing": lambda *args: args[0]}
     
     # be verbose
     if verbose:
