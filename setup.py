@@ -1,24 +1,23 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
-from pathlib import Path
+import versioneer
 
-with open(Path("./README.md").resolve(), 'r') as fh:
+with open("README.md", 'r') as fh:
     long_description = fh.read()
+with open("requirements.txt", "r") as fh:
+    requirements = [line.strip() for line in fh]
 
 setup(
     name = "uszparser",
-    version = "1.0",
+    version = versioneer.get_version(),
+    cmdclass = versioneer.get_cmdclass(),
     packages = find_packages(),
     author = "Roman Ludwig",
     author_email = "roman.ludwig@usz.ch",
     description = "Small program for parsing an Excel file of USZ patients.",
     long_description = long_description,
-    install_requires = [
-        "pandas",
-        "numpy",
-        "dateutils"
-    ],
+    install_requires = requirements,
     python_requires = ">=3.6",
     classifiers=[
         "Programming Language :: Python :: 3",
