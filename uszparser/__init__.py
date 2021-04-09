@@ -6,6 +6,16 @@ information. It is stored in the accompanying JSON file."""
 __author__ = "Roman Ludwig"
 __license__ = "MIT"
 __email__ = "roman.ludwig@usz.ch"
+__uri__ = "https://lymph-model.readthedocs.io"
+
+__all__ = ["yn2tf",
+           "posneg2tf",
+           "discard_char",
+           "involvement",
+           "age",
+           "find",
+           "multiIndex_from_json",
+           "parse",]
 
 
 from ._version import get_versions
