@@ -39,6 +39,11 @@
                 "row_loc": 29,
                 "col_loc": 1,
                 "func": "yn2tf"
+            },
+            "neck-dissection": {
+                "row_loc": 9,
+                "col_loc": 1,
+                "func": "neck_dissect"
             }
         },
         "stage": {

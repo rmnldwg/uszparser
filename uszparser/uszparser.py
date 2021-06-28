@@ -77,6 +77,17 @@ def age(diagnose_n_birth):
     return age
 
 
+def neck_dissect(string):
+    """Return ``True`` if the comment in the Excel file says 'unilateral', 
+    ``False``, when it says 'no' and ``None`` otherwise."""
+    if string == "unilateral":
+        return True
+    elif string == "no":
+        return False
+    else:
+        return None
+
+
 
 def find(arr, icd_code=False):
     """Search in the first column of `arr` for a 'Yes' and return the respective 
@@ -156,6 +167,7 @@ def parse(excel_data: pd.DataFrame,
                  "find_icd": lambda x: find(x, icd_code=True),
                  "date": lambda x: dtprs.parse(x).date().strftime("%Y-%m-%d"),
                  "age": age,
+                 "neck_dissect": neck_dissect,
                  "str": lambda x: str(x).lower(),
                  "int": int,
                  "float": float,
@@ -168,7 +180,7 @@ def parse(excel_data: pd.DataFrame,
         print("Create MultiIndex & parse JSON file... ", end="")
     
     # create the MultiIndex & convert JSON file to dictionary
-    idx_tuples, multi_idx, json_dict = multiIndex_from_json(json_file)
+    _, multi_idx, json_dict = multiIndex_from_json(json_file)
 
     # be verbose
     if verbose:
@@ -238,7 +250,7 @@ def parse(excel_data: pd.DataFrame,
             except:
                 new_row[(mod, "info", "date")] = None
 
-            for j, s in enumerate(sides):
+            for s in sides:
                 s_cols = json_dict["modalities_cols"][s]
                 for k, l in enumerate(lnls):
                     row = mod_rows[i] + l_rows[k]

@@ -1,19 +1,12 @@
 # USZ Parser
 
-Program for parsing the excel file that was created by Bertrand Pouymayou 
-and then filled with patients by Jean-Marc Hoffmann. The excel file's 
-particular structure makes it necessary to hard-code the location of all 
-information. It is stored in the accompanying JSON file.
+Program for parsing the excel file that was created by Bertrand Pouymayou and then filled with patients by Jean-Marc Hoffmann. The excel file's particular structure makes it necessary to hard-code the location of all information. It is stored in the accompanying JSON file.
 
-In its current state, the following info is extracted from the Excel file and 
-grouped according to what I thought could fit:
+In its current state, the following info is extracted from the Excel file and grouped according to what I thought could fit:
 
 ## Table structure
 
-The header of the CSV file has three rows. This is to group columns into categories 
-and subcategories. In the list below the overarching categories are the first 
-list level, then comes a finer categorization and finally the name and description 
-of the actual row.
+The header of the CSV file has three rows. This is to group columns into categories and subcategories. In the list below the overarching categories are the first list level, then comes a finer categorization and finally the name and description of the actual row.
 
 1. **``patient``** This contains all info that is patient-specific
    1.  **``general``** Info not necessarily related to his disease
