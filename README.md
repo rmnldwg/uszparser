@@ -61,3 +61,28 @@ The header of the CSV file has three rows. This is to group columns into categor
 
 4. **``{modality 2}``** Report of nodal involvement for ``{modality 2}``...
    1. ...
+
+## Usage
+
+To collect all the extracted patients in a single CSV file, run the command ``python -m uszparser`` with the correct flags and arguments, which can be displayed by providing the ``--help`` flag:
+
+```
+usage: __main__.py [-h] [-j JSON] [-s SAVE] [-v] excel
+
+positional arguments:
+  excel                 Excel file that is supposed to be parsed
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -j JSON, --json JSON  JSON file that contains what to parse
+  -s SAVE, --save SAVE  Where to save the resulting CSV file? (Default: "./parsed.csv")
+  -v, --verbose         Give progress update
+```
+
+So, if you have a JSON file ``settings.json`` as well as the extraced Excel file ``extracted.xlsm`` in the current working directory, then you can run
+
+```
+python -m uszparser -j settings.json -s /path/to/your/output.csv extracted.xlsm
+```
+
+to parse the Excel file and save its output as CSV table.
