@@ -4,6 +4,7 @@ Program for parsing the excel file that was created by Bertrand Pouymayou and th
 
 In its current state, the following info is extracted from the Excel file and grouped according to what I thought could fit:
 
+
 ## Table structure
 
 The header of the CSV file has three rows. This is to group columns into categories and subcategories. In the list below the overarching categories are the first list level, then comes a finer categorization and finally the name and description of the actual row.
@@ -21,6 +22,7 @@ The header of the CSV file has three rows. This is to group columns into categor
    
    3.  **``condition``** More info about patient's health condition.
        1.  **``HPV``** (``bool``) p16 status.
+       2.  **``neck-dissection``** (``bool``) whether patient has undergone neck dissection
 
    4.  **``stage``** N & M part of the TNM staging system. T is not reported here, since it is tumor-specific
        1.  **``N``** (``int``) Stage of nodal involvement.
@@ -61,6 +63,26 @@ The header of the CSV file has three rows. This is to group columns into categor
 
 4. **``{modality 2}``** Report of nodal involvement for ``{modality 2}``...
    1. ...
+
+For most columns described here there exists a corresponding entry in the JSON file that comes with a key ``row_loc`` for the row in which to find the value in the original Excel file, as well as a ``col_loc`` for the column number and a key ``func``. This last one specifies a string (e.g. ``"int"``, ``"age"``, ...) that the program understands as a function to interpret what it finds at ``row_loc``, ``col_loc``. The complete list of functions it currently understands is
+
+| function         | description                                                                                  |
+| :--------------- | :------------------------------------------------------------------------------------------- |
+| ``yn2tf``        | convert "yes" & "no" to ``True`` & ``False`` (``None`` otherwise)                            |
+| ``posneg2tf``    | convert "positive" & "negative" to ``True`` & ``False`` (``None`` otherwise)                 |
+| ``discard_char`` | convert e.g. "N2" to ``2`` by discarding the first character                                 |
+| ``find_subsite`` | find subsite in array                                                                        |
+| ``find_icd``     | find ICD code in array                                                                       |
+| ``date``         | convert string in the format of YYYY-MM-DD into a date object                                |
+| ``age``          | compute the patient's age from birthday and diagnose date (both locations must be specified) |
+| ``neck_dissect`` | convert "unilateral" & "no" to ``True`` & ``False`` (``None`` otherwise)                     |
+| ``str``          | interpret as lowercase string                                                                |
+| ``int``          | interpret as integer                                                                         |
+| ``float``        | interpret as decimal number                                                                  |
+| ``bool``         | interpret as boolean                                                                         |
+| ``inv``          | return ``None`` if it is "unknown" and ``yn2tf`` otherwise                                   |
+| ``nothing``      | do nothing                                                                                   |
+
 
 ## Usage
 
