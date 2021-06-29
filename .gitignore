@@ -130,3 +130,6 @@ dmypy.json
 
 # other
 *.bak
+
+# don't add CSV with patient specific info
+*.csv
