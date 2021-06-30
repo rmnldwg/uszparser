@@ -1,40 +1,31 @@
 #!/usr/bin/env python
 
-import pandas as pd 
-import numpy as np 
+
+import pandas as pd
+import numpy as np
 from dateutil import parser as dtprs
 
 from itertools import product
 import json
 import re
 
+# import tqdm & icecream
+from tqdm import tqdm
+from icecream import ic
+ic.configureOutput(prefix="", outputFunction=print)
 
 
-def yn2tf(yesno):
-    """Function that converts 'yes' & 'no' into `True` & `False`."""
-    try:
-        if yesno.casefold() == "yes":
-            return True
-        elif yesno.casefold() == "no":
-            return False
-        else:
+def map_with_dict(options_dict):
+    """Return a function that maps a given input according to the given 
+    dictionary to the respective outputs."""
+    
+    def func(raw):
+        try:
+            return options_dict[f"{raw}".lower()]
+        except KeyError:
             return None
-    except:
-        return None
-
-
-
-def posneg2tf(posneg):
-    """Function that converts 'positive' & 'negative' into `True` & `False`."""
-    try:
-        if posneg.casefold() == "positive":
-            return True
-        elif posneg.casefold() == "negative":
-            return False
-        else:
-            return None
-    except:
-        return None
+        
+    return func
 
 
 
@@ -53,14 +44,6 @@ def discard_char(string):
 
 
 
-def involvement(string):
-    if string.casefold() == "unknown":
-        return None
-    else:
-        return yn2tf(string)
-
-
-
 def age(diagnose_n_birth):
     """Compute age from array with two entries: Date of birth & date of 
     diagnosis."""
@@ -74,17 +57,6 @@ def age(diagnose_n_birth):
         age -= 1
 
     return age
-
-
-def neck_dissect(string):
-    """Return ``True`` if the comment in the Excel file says 'unilateral', 
-    ``False``, when it says 'no' and ``None`` otherwise."""
-    if string == "unilateral":
-        return True
-    elif string == "no":
-        return False
-    else:
-        return None
 
 
 
@@ -143,7 +115,7 @@ def multiIndex_from_json(json_file):
 def parse(excel_data: pd.DataFrame, 
           kisim_numbers: list, 
           json_file,
-          verbose:bool =False) -> pd.DataFrame:
+          verbose:bool = False) -> pd.DataFrame:
     """Parse an excel dataset according to instructions in a JSON file.
     
     Args:
@@ -159,42 +131,40 @@ def parse(excel_data: pd.DataFrame,
         The parsed data."""
     # list of functions that are supposed to be called for the 'func' keywords
     # in the JSON file
-    func_dict = {"yn2tf": yn2tf,
-                 "posneg2tf": posneg2tf,
-                 "discard_char": discard_char,
+    func_dict = {"discard_char": discard_char,
                  "find_subsite": find,
                  "find_icd": lambda x: find(x, icd_code=True),
                  "date": lambda x: dtprs.parse(x).date().strftime("%Y-%m-%d"),
                  "age": age,
-                 "neck_dissect": neck_dissect,
                  "str": lambda x: str(x).lower(),
                  "int": int,
                  "float": float,
                  "bool": bool,
-                 "inv": involvement,
                  "nothing": lambda *args: args[0]}
     
     # be verbose
     if verbose:
-        print("Create MultiIndex & parse JSON file... ", end="")
+        ic.enable()
+    else:
+        ic.disable()
     
-    # create the MultiIndex & convert JSON file to dictionary
     _, multi_idx, json_dict = multiIndex_from_json(json_file)
-
-    # be verbose
-    if verbose:
-        print("DONE")
-        print("Create DataFrame... ", end="")
+    ic("Created MultiIndex according to provided JSON file")
 
     # new DataFrame where all the information will be stored
     new_data = pd.DataFrame(columns=multi_idx)
 
-    # be verbose
+    # create iterator with progress bar (if verbose)
     if verbose:
-        print("DONE")
-
+        enumerated_sheets = tqdm(
+            enumerate(excel_data.items()),
+            desc="Looping through sheets: "
+        )
+    else:
+        enumerated_sheets = enumerate(excel_data.items())
+    
     # loop through sheets
-    for i, (kisim, sheet) in enumerate(excel_data.items()):
+    for i, (kisim, sheet) in enumerated_sheets:
         # make sure the KISIM number exists and matches with the list of patients
         if (int(kisim) != sheet.iloc[1, 1]) or (kisim != kisim_numbers[i]):
             raise Exception("KISIM numbers don't match")
@@ -202,33 +172,24 @@ def parse(excel_data: pd.DataFrame,
         # append new row to pandas DataFrame
         new_row = {}
 
-        # add patient info to new row
-        item1 = json_dict["patient"]
-        for key2, item2 in item1.items():
-            for key3, item3 in item2.items():
-                try:
-                    raw = sheet.iloc[item3["row_loc"], item3["col_loc"]].values
-                except AttributeError:
-                    raw = sheet.iloc[item3["row_loc"], item3["col_loc"]]
-                except ValueError:
-                    raw = None
+        # add info about patient & tumor to new row
+        for sup_category in ["patient", "tumor"]:
+            obj = json_dict[sup_category]
+            for category, columns in obj.items():
+                for column, details in columns.items():
+                    try:
+                        raw = sheet.iloc[details["row"], details["col"]].values
+                    except AttributeError:
+                        raw = sheet.iloc[details["row"], details["col"]]
+                    except ValueError:
+                        raw = None
 
-                func = func_dict[item3["func"]]
-                new_row[("patient", key2, key3)] = func(raw)
-
-        # add tumor info to new row
-        item1 = json_dict["tumor"]
-        for key2, item2 in item1.items():
-            for key3, item3 in item2.items():
-                try:
-                    raw = sheet.iloc[item3["row_loc"], item3["col_loc"]].values
-                except AttributeError:
-                    raw = sheet.iloc[item3["row_loc"], item3["col_loc"]]
-                except ValueError:
-                    raw = None
-
-                func = func_dict[item3["func"]]
-                new_row[("tumor", key2, key3)] = func(raw)
+                    try:
+                        func = map_with_dict(details["options"])
+                    except KeyError:
+                        func = func_dict[details["func"]]
+                    
+                    new_row[(sup_category, category, column)] = func(raw)
 
         # add involvement info to new row
         modalities = json_dict["modalities"]
@@ -237,6 +198,12 @@ def parse(excel_data: pd.DataFrame,
         mod_info_cols = json_dict["modalities_info_cols"]
 
         sides = list(json_dict["modalities_cols"].keys())
+        options_dict = {
+            "unknown": None,
+            "yes": True,
+            "no": False
+        }
+        func = map_with_dict(options_dict)
 
         lnls = json_dict["lnls"]
         l_rows = json_dict["lnls_rows"]
@@ -254,21 +221,12 @@ def parse(excel_data: pd.DataFrame,
                 for k, l in enumerate(lnls):
                     row = mod_rows[i] + l_rows[k]
                     col = s_cols[i]
-                    new_row[(mod, s, l)] = func_dict["inv"](
-                        sheet.iloc[row, col])
+                    new_row[(mod, s, l)] = func(sheet.iloc[row, col])
 
         # add new row to the DataFrame
         new_data = new_data.append(new_row, ignore_index=True)
 
-        # be verbose
-        if verbose:
-            print(
-                f"\rLooping through sheets...{100 * (i+1) / len(kisim_numbers):6.2f}%", end="")
-
-    # be verbose
-    if verbose:
-        print("\033[2K", end="")
-        print("\rLooping through sheets... DONE")
+    ic("Parsing done")
 
     # return created DataFrame
     return new_data

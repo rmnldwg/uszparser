@@ -2,6 +2,14 @@
 
 import argparse as ap
 from pathlib import Path
+import pandas as pd
+
+# import and configure icecream
+from icecream import ic
+ic.configureOutput(prefix="", outputFunction=print)
+
+from .uszparser import parse
+
 
 # ARGPARSE: parse command line arguments. Namely the path to the excel 
 # file, the json file that stores the details of every entry of interest, as 
@@ -23,24 +31,28 @@ args = parser.parse_args()
 
 # be verbose
 if args.verbose:
-    print("Open files (Excel & JSON)... ", end="")
+    ic.enable()
+else:
+    ic.disable()
 
-# open JSON file & create tuple, MultiIndex
 json_file = open(args.json, 'r')
-# open excel
-kisim_numbers = pd.read_excel(args.excel,
-                                usecols='A',
-                                dtype={"KISIM": str})["KISIM"].to_list()
+ic("Opened JSON file")
+
+first_sheet = pd.read_excel(
+    args.excel,
+    usecols='A',
+    dtype={"KISIM": str}
+)
+ic("Read KISIM numbers from first sheet of Excel")
+kisim_numbers = first_sheet["KISIM"].to_list()
+# ...find all the sheets to parse.
 excel_data = pd.read_excel(args.excel,
-                            sheet_name=kisim_numbers,
-                            header=None)
-
-# be verbose
-if args.verbose:
-    print("DONE")
+                           sheet_name=kisim_numbers,
+                           header=None)
+ic("Used KISIM numbers to open sheets")
     
-# parse
 new_data = parse(excel_data, kisim_numbers, json_file, verbose=args.verbose)
+ic("Parsing successfully finished!")
 
-# save
 new_data.to_csv(args.save, index=False)
+ic("CSV has been saved to disk!")

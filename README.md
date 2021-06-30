@@ -64,23 +64,30 @@ The header of the CSV file has three rows. This is to group columns into categor
 4. **``{modality 2}``** Report of nodal involvement for ``{modality 2}``...
    1. ...
 
-For most columns described here there exists a corresponding entry in the JSON file that comes with a key ``row_loc`` for the row in which to find the value in the original Excel file, as well as a ``col_loc`` for the column number and a key ``func``. This last one specifies a string (e.g. ``"int"``, ``"age"``, ...) that the program understands as a function to interpret what it finds at ``row_loc``, ``col_loc``. The complete list of functions it currently understands is
+For most columns described here there exists a corresponding entry in the JSON file that comes with a key ``row`` for the row in which to find the value in the original Excel file, as well as a ``col`` for the column number and a key ``options`` or ``func``. With the ``options`` one can specify which values at the location ``[row,col]`` to map to which value in the final table. For example
+
+```json
+"options": {
+    "yes": true,
+    "no": false
+}
+```
+
+simply reads any field containing "yes" as ``True`` and any field with "no" as ``False``. If anything else is found there, it interprets that as ``None``.
+
+ Using ``func`` instead of ``option`` one specifies a string (e.g. ``"int"``, ``"age"``, ...) that the program understands as a function that will be used to interpret what it finds at row ``row`` and column ``col``. The complete list of functions it currently understands is
 
 | function         | description                                                                                  |
 | :--------------- | :------------------------------------------------------------------------------------------- |
-| ``yn2tf``        | convert "yes" & "no" to ``True`` & ``False`` (``None`` otherwise)                            |
-| ``posneg2tf``    | convert "positive" & "negative" to ``True`` & ``False`` (``None`` otherwise)                 |
 | ``discard_char`` | convert e.g. "N2" to ``2`` by discarding the first character                                 |
 | ``find_subsite`` | find subsite in array                                                                        |
 | ``find_icd``     | find ICD code in array                                                                       |
 | ``date``         | convert string in the format of YYYY-MM-DD into a date object                                |
 | ``age``          | compute the patient's age from birthday and diagnose date (both locations must be specified) |
-| ``neck_dissect`` | convert "unilateral" & "no" to ``True`` & ``False`` (``None`` otherwise)                     |
 | ``str``          | interpret as lowercase string                                                                |
 | ``int``          | interpret as integer                                                                         |
 | ``float``        | interpret as decimal number                                                                  |
 | ``bool``         | interpret as boolean                                                                         |
-| ``inv``          | return ``None`` if it is "unknown" and ``yn2tf`` otherwise                                   |
 | ``nothing``      | do nothing                                                                                   |
 
 

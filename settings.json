@@ -2,59 +2,71 @@
     "patient": {
         "general": {
             "ID": {
-                "row_loc": 1,
-                "col_loc": 1,
+                "row": 1,
+                "col": 1,
                 "func": "int"
             },
             "gender": {
-                "row_loc": 2,
-                "col_loc": 1,
+                "row": 2,
+                "col": 1,
                 "func": "str"
             },
             "age": {
-                "row_loc": [3,4],
-                "col_loc": 1,
+                "row": [3,4],
+                "col": 1,
                 "func": "age"
             },
             "diagnosedate": {
-                "row_loc": 4,
-                "col_loc": 1,
+                "row": 4,
+                "col": 1,
                 "func": "date"
             }
         },
         "abuse": {
             "alcohol": {
-                "row_loc": 12,
-                "col_loc": 1,
-                "func": "yn2tf"
+                "row": 12,
+                "col": 1,
+                "options": {
+                    "yes": true,
+                    "no": false
+                }
             },
             "nicotine": {
-                "row_loc": 13,
-                "col_loc": 1,
-                "func": "yn2tf"
+                "row": 13,
+                "col": 1,
+                "options": {
+                    "yes": true,
+                    "no": false
+                }
             }
         },
         "condition": {
             "HPV": {
-                "row_loc": 29,
-                "col_loc": 1,
-                "func": "yn2tf"
+                "row": 29,
+                "col": 1,
+                "options": {
+                    "yes": true,
+                    "no": false
+                }
             },
             "neck-dissection": {
-                "row_loc": 9,
-                "col_loc": 1,
-                "func": "neck_dissect"
+                "row": 9,
+                "col": 1,
+                "options": {
+                    "unilateral": true,
+                    "no": false
+                }
             }
         },
         "stage": {
             "N": {
-                "row_loc": 26,
-                "col_loc": 1,
+                "row": 26,
+                "col": 1,
                 "func": "discard_char"
             },
             "M": {
-                "row_loc": 27,
-                "col_loc": 1,
+                "row": 27,
+                "col": 1,
                 "func": "discard_char"
             }
         }
@@ -62,43 +74,46 @@
     "tumor": {
         "1": {
             "location": {
-                "row_loc": 31,
-                "col_loc": 2,
+                "row": 31,
+                "col": 2,
                 "func": "str"
             },
             "subsite": {
-                "row_loc": [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88],
-                "col_loc": [4,5],
+                "row": [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88],
+                "col": [4,5],
                 "func": "find_subsite"
             },
             "ICD-O-3": {
-                "row_loc": [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88],
-                "col_loc": [4,3],
+                "row": [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88],
+                "col": [4,3],
                 "func": "find_icd"
             },
             "side": {
-                "row_loc": 33,
-                "col_loc": 2,
+                "row": 33,
+                "col": 2,
                 "func": "str"
             },
             "extension": {
-                "row_loc": 32,
-                "col_loc": 2,
-                "func": "posneg2tf"
+                "row": 32,
+                "col": 2,
+                "options": {
+                    "positive": true,
+                    "negative": false
+                }
             },
             "size": {
-                "row_loc": null,
-                "col_loc": null,
+                "row": null,
+                "col": null,
                 "func": "nothing"
             },
             "prefix": {
-                "row_loc": 24,
-                "col_loc": 1,
+                "row": 24,
+                "col": 1,
                 "func": "str"
             },
             "stage": {
-                "row_loc": 25,
-                "col_loc": 1,
+                "row": 25,
+                "col": 1,
                 "func": "discard_char"
             }
         }
