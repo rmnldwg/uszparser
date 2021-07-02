@@ -8,11 +8,14 @@ __license__ = "MIT"
 __email__ = "roman.ludwig@usz.ch"
 __uri__ = "https://lymph-model.readthedocs.io"
 
-__all__ = [
-    "multiIndex_from_json",
-    "parse",
-]
-
 from ._version import get_versions
 __version__ = get_versions()['version']
 del get_versions
+
+from .uszparser import *
+
+__all__ = [
+    "multiIndex_from_json",
+    "parse",
+    "recursive_traverse"
+]

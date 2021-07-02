@@ -3,6 +3,7 @@
 import argparse as ap
 from pathlib import Path
 import pandas as pd
+import json
 
 # import and configure icecream
 from icecream import ic
@@ -35,7 +36,9 @@ if args.verbose:
 else:
     ic.disable()
 
-json_file = open(args.json, 'r')
+with open(args.json, 'r') as json_file:
+    dictionary = json.load(json_file)
+    
 ic("Opened JSON file")
 
 first_sheet = pd.read_excel(
@@ -51,8 +54,8 @@ excel_data = pd.read_excel(args.excel,
                            header=None)
 ic("Used KISIM numbers to open sheets")
     
-new_data = parse(excel_data, kisim_numbers, json_file, verbose=args.verbose)
+data_frame = parse(excel_data, dictionary, verbose=args.verbose)
 ic("Parsing successfully finished!")
 
-new_data.to_csv(args.save, index=False)
+data_frame.to_csv(args.save, index=False)
 ic("CSV has been saved to disk!")
