@@ -120,9 +120,11 @@
     },
     "FNA": {
         "info": {
-            "row": 30,
-            "col": 3,
-            "func": "date"
+            "date": {
+                "row": 30,
+                "col": 3,
+                "func": "date"
+            }
         },
         "right": {
             "I": {
@@ -355,9 +357,11 @@
     },
     "PET": {
         "info": {
-            "row": 30,
-            "col": 4,
-            "func": "date"
+            "date": {
+                "row": 30,
+                "col": 4,
+                "func": "date"
+            }
         },
         "right": {
             "I": {
@@ -590,9 +594,11 @@
     },
     "CT": {
         "info": {
-            "row": 30,
-            "col": 5,
-            "func": "date"
+            "date": {
+                "row": 30,
+                "col": 5,
+                "func": "date"
+            }
         },
         "right": {
             "I": {
@@ -825,9 +831,11 @@
     },
     "MRI": {
         "info": {
-            "row": 30,
-            "col": 6,
-            "func": "date"
+            "date": {
+                "row": 30,
+                "col": 6,
+                "func": "date"
+            }
         },
         "right": {
             "I": {
@@ -1060,9 +1068,11 @@
     },
     "pCT": {
         "info": {
-            "row": 30,
-            "col": 2,
-            "func": "date"
+            "date": {
+                "row": 30,
+                "col": 2,
+                "func": "date"
+            }
         },
         "right": {
             "I": {
@@ -1295,9 +1305,11 @@
     },
     "path": {
         "info": {
-            "row": 30,
-            "col": 7,
-            "func": "date"
+            "date": {
+                "row": 30,
+                "col": 7,
+                "func": "date"
+            }
         },
         "right": {
             "I": {

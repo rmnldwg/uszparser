@@ -31,7 +31,7 @@ def discard_char(string):
 
     res = findings[0]
     if res == 'x':
-        res = 2  # this is only the case for the M-stage
+        res = 2
 
     return res
 
@@ -72,11 +72,18 @@ def find(arr, icd_code=False):
     return found
 
 
+def reformat_date(string):
+    """Bring dates into uniform format."""
+    string = string.split()[0]
+    dt = dtprs.parse(string)
+    return dt.strftime("%Y-%m-%d")
+
+
 FUNC_DICT = {
     "discard_char": discard_char,
     "find_subsite": find,
     "find_icd": lambda x: find(x, icd_code=True),
-    "date": lambda x: dtprs.parse(x).date().strftime("%Y-%m-%d"),
+    "date": reformat_date,
     "age": age,
     "str": lambda x: str(x).lower(),
     "int": int,
@@ -111,6 +118,12 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
     redux_dict = recursive_traverse(dictionary)
     
     column_tuples = redux_dict.keys()
+    tuple_lengths = [len(tuple) for tuple in column_tuples]
+    
+    if len(set(tuple_lengths)) > 1:
+        raise ValueError("Depth of provided JSON file is inconsistent. All "
+                         "entries must be located at the same depth.")
+    
     multi_index = pd.MultiIndex.from_tuples(tuples=column_tuples)
     data_frame = pd.DataFrame(columns=multi_index)
     
@@ -138,7 +151,10 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
             except KeyError:
                 func = FUNC_DICT[instr["func"]]
                 
-            new_row[column] = func(raw)
+            try:
+                new_row[column] = func(raw)
+            except:
+                new_row[column] = None
             
         data_frame = data_frame.append(new_row, ignore_index=True)
         
