@@ -9,6 +9,17 @@ from typing import Dict, Tuple, List, Any, Optional
 from tqdm import tqdm
 
 
+class SimpleLog(object):
+    """Very basic class for verbose output inspired by `icecream`."""
+    
+    def __init__(self, enabled: bool = True):
+        self.enabled = enabled
+        
+    def log(self, string, **kwargs):
+        if self.enabled:
+            print(string, **kwargs)
+
+
 def map_with_dict(options_dict):
     """Return a function that maps a given input according to the given 
     dictionary to the respective outputs."""
@@ -130,7 +141,8 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
     if verbose:
         sheets = tqdm(
             excel_sheets.items(),
-            desc="Looping through sheets"
+            desc="Looping through sheets",
+            ncols=100
         )
     else:
         sheets = excel_sheets.items()
