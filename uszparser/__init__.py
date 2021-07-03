@@ -15,7 +15,6 @@ del get_versions
 from .uszparser import *
 
 __all__ = [
-    "multiIndex_from_json",
     "parse",
     "recursive_traverse"
 ]

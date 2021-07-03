@@ -26,7 +26,7 @@ def map_with_dict(options_dict):
     
     def func(raw):
         try:
-            return options_dict[f"{raw}".lower()]
+            return options_dict[raw]
         except KeyError:
             return None
         
@@ -90,6 +90,11 @@ def reformat_date(string):
     return dt.strftime("%Y-%m-%d")
 
 
+def compute_hash(*args):
+    """Compute a hash vlaue from all given arguments."""
+    return hash(args)
+
+
 FUNC_DICT = {
     "discard_char": discard_char,
     "find_subsite": find,
@@ -100,6 +105,7 @@ FUNC_DICT = {
     "int": int,
     "float": float,
     "bool": bool,
+    "hash": compute_hash,
     "nothing": lambda *args: args[0]
 }
 
