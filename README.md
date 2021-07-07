@@ -1,8 +1,53 @@
 # USZ Parser
 
-Program for parsing the excel file that was created by Bertrand Pouymayou and then filled with patients by Jean-Marc Hoffmann. The excel file's particular structure makes it necessary to hard-code the location of all information. It is stored in the accompanying JSON file.
+Program for parsing the excel file that was created by Bertrand Pouymayou and then filled with patients by Jean-Marc Hoffmann. The excel file's particular structure makes it necessary to hard-code the location of all information. This information must be stored in a JSON file.
 
-In its current state, the following info is extracted from the Excel file and grouped according to what I thought could fit:
+
+## JSON structure
+
+The structure of this JSON file determines the header and columns of the final CSV output. E.g. if the JSON dictionary has a depth of two (all entries must have the same depth), then you will end up with a table that has two rows. An example:
+
+```json
+{
+    "patient": {
+        "age": {
+            "row": [3,4],
+            "col": 1,
+            "func": "age"
+        },
+        "gender": {
+            "row": 2,
+            "col": 1,
+            "func": "str"
+        }
+    },
+    "tumor": {
+        "midline-extension": {
+            "row": 32,
+            "col": 2,
+            "choices": {
+                "positive": true,
+                "negative": false
+            }
+        }
+    }
+}
+```
+
+This JSON document has three entries. Entries are characterized by dictionaries containing the keywords ``row``, ``col`` and either ``func`` or ``choices``. Each entry itself is the value to the key of a high level dictionary.
+
+The resulting CSV file would look something like this:
+
+```
+    | patient | patient | tumor             |
+    | age     | gender  | midline-extension |
+    | ------- | ------- | ----------------- |
+1:  |      67 | male    | true              |
+2:  |      71 | female  | false             |
+3:  |     ... | ...     | ...               |
+```
+
+The first header row corresponds to the top-level keys ``patient`` and ``tumor`` under which one finds another dictionary each which's keys represent the second level of the CSV's header.
 
 
 ## Table structure
