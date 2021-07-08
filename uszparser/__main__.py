@@ -3,12 +3,10 @@
 import argparse as ap
 from pathlib import Path
 import pandas as pd
+import json
+import time
 
-# import and configure icecream
-from icecream import ic
-ic.configureOutput(prefix="", outputFunction=print)
-
-from .uszparser import parse
+from .uszparser import parse, SimpleLog
 
 
 # ARGPARSE: parse command line arguments. Namely the path to the excel 
@@ -30,29 +28,38 @@ parser.add_argument("-v", "--verbose", action="store_true",
 args = parser.parse_args()
 
 # be verbose
-if args.verbose:
-    ic.enable()
-else:
-    ic.disable()
+sl = SimpleLog(enabled=args.verbose)
 
-json_file = open(args.json, 'r')
-ic("Opened JSON file")
+# keep time
+start = time.time()
 
+sl.log("Opening JSON specification file...", end="")
+with open(args.json, 'r') as json_file:
+    dictionary = json.load(json_file)
+sl.log("DONE")
+
+sl.log("Extracting sheet names from first sheet...", end="")
 first_sheet = pd.read_excel(
     args.excel,
     usecols='A',
     dtype={"KISIM": str}
 )
-ic("Read KISIM numbers from first sheet of Excel")
 kisim_numbers = first_sheet["KISIM"].to_list()
-# ...find all the sheets to parse.
+sl.log("DONE")
+
+sl.log("Reading in all specified sheets...", end="")
 excel_data = pd.read_excel(args.excel,
                            sheet_name=kisim_numbers,
                            header=None)
-ic("Used KISIM numbers to open sheets")
-    
-new_data = parse(excel_data, kisim_numbers, json_file, verbose=args.verbose)
-ic("Parsing successfully finished!")
+sl.log("DONE")
 
-new_data.to_csv(args.save, index=False)
-ic("CSV has been saved to disk!")
+sl.log("Parsing loaded sheets according to JSON specs...", end="")
+data_frame = parse(excel_data, dictionary, verbose=args.verbose)
+sl.log("DONE")
+
+sl.log("Saving resulting CSV to disk...", end="")
+data_frame.to_csv(args.save, index=False)
+sl.log("DONE")
+
+end = time.time()
+sl.log(f"Finished after {end - start:.2f} seconds")

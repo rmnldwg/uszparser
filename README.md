@@ -1,99 +1,45 @@
 # USZ Parser
 
-Program for parsing the excel file that was created by Bertrand Pouymayou and then filled with patients by Jean-Marc Hoffmann. The excel file's particular structure makes it necessary to hard-code the location of all information. It is stored in the accompanying JSON file.
-
-In its current state, the following info is extracted from the Excel file and grouped according to what I thought could fit:
+Program for parsing the Excel files were each instance's data is stored in a separate sheet, instead of a row or column on the same sheet. This way of storing data in an Excel file can be more human-readable, but it makes it harder to parse with things like ``pandas``.
 
 
-## Table structure
+## Installation
 
-The header of the CSV file has three rows. This is to group columns into categories and subcategories. In the list below the overarching categories are the first list level, then comes a finer categorization and finally the name and description of the actual row.
+To install this program or use the function it provides as a module, start by cloning the repository:
 
-1. **``patient``** This contains all info that is patient-specific
-   1.  **``general``** Info not necessarily related to his disease
-       1.  **``ID``** (``int``) Random ID number.
-       2.  **``gender``** (``male`` or ``female``) Gender of the patient.
-       3.  **``age``** (``int``) Age at diagnosis.
-       4.  **``diagnosedate``** (``date``) Date of diagnosis. 
-   
-   2.  **``abuse``** Reports on different drug abuses
-       1.  **``alcohol``** (``bool``) Alcoholism or not
-       2.  **``nicotine``** (``bool``) Smoker or not
-   
-   3.  **``condition``** More info about patient's health condition.
-       1.  **``HPV``** (``bool``) p16 status.
-       2.  **``neck-dissection``** (``bool``) whether patient has undergone neck dissection
-
-   4.  **``stage``** N & M part of the TNM staging system. T is not reported here, since it is tumor-specific
-       1.  **``N``** (``int``) Stage of nodal involvement.
-       2.  **``M``** (``int``) Stage of distant metastases.
-
-
-2.  **``tumor``** Collects info about primary tumor(s).
-    1.  **``1``** Info about first primary tumor.
-        1.  **``location``** (``str``) Location of the tumor.
-        2.  **``subsite``** (``str``) Subsite, essentially more precise report of tumor location.
-        3.  **``ICD-O-3``** (``str``) ICD code of the tumor subsite.
-        4.  **``side``** (``left``, ``right`` or ``central``) Lateralization of primary tumor
-        5.  **``extension``** (``bool``) Tumor extends over sagittal midline or not
-        6.  **``size``** (``float``) Size of tumor in cm³.
-        7.  **``prefix``** (``c`` or ``p``) Prefix for tumor T-stage.
-        8.  **``stage``** (``int``) T-stage of tumor.
-    
-    2. **``2``** Info about second tumor (if it exists) ...
-       1. ...
-
-
-3. **``{modality 1}``** Report of nodal involvement for ``{modality 1}``.
-   1. **``info``** Quick info about the diagnosis.
-      1. **``date``** (``date``) Date when diagnosis was taken.
-   
-   2. **``right``** Diagnosed involvement of the right side of the neck.
-      1. **``I``** (``bool``) Involvement of LNL I
-      2. **``II``** (``bool``) Involvement of LNL II
-      3. **``III``** (``bool``) Involvement of LNL III
-      4. ...
-   
-   3. **``left``** Diagnosed involvement of the left side of the neck.
-      1. **``I``** (``bool``) Involvement of LNL I
-      2. **``II``** (``bool``) Involvement of LNL II
-      3. **``III``** (``bool``) Involvement of LNL III
-      4. ...
-
-
-4. **``{modality 2}``** Report of nodal involvement for ``{modality 2}``...
-   1. ...
-
-For most columns described here there exists a corresponding entry in the JSON file that comes with a key ``row`` for the row in which to find the value in the original Excel file, as well as a ``col`` for the column number and a key ``options`` or ``func``. With the ``options`` one can specify which values at the location ``[row,col]`` to map to which value in the final table. For example
-
-```json
-"options": {
-    "yes": true,
-    "no": false
-}
+```
+git clone https://github.com/rmnldwg/uszparser.git
 ```
 
-simply reads any field containing "yes" as ``True`` and any field with "no" as ``False``. If anything else is found there, it interprets that as ``None``.
+then, ``cd`` into it
 
- Using ``func`` instead of ``option`` one specifies a string (e.g. ``"int"``, ``"age"``, ...) that the program understands as a function that will be used to interpret what it finds at row ``row`` and column ``col``. The complete list of functions it currently understands is
+```
+cd uszparser
+```
 
-| function         | description                                                                                  |
-| :--------------- | :------------------------------------------------------------------------------------------- |
-| ``discard_char`` | convert e.g. "N2" to ``2`` by discarding the first character                                 |
-| ``find_subsite`` | find subsite in array                                                                        |
-| ``find_icd``     | find ICD code in array                                                                       |
-| ``date``         | convert string in the format of YYYY-MM-DD into a date object                                |
-| ``age``          | compute the patient's age from birthday and diagnose date (both locations must be specified) |
-| ``str``          | interpret as lowercase string                                                                |
-| ``int``          | interpret as integer                                                                         |
-| ``float``        | interpret as decimal number                                                                  |
-| ``bool``         | interpret as boolean                                                                         |
-| ``nothing``      | do nothing                                                                                   |
+Now - assuming you have [``venv``](https://docs.python.org/3/library/venv.html) installed (if not you can probably install it with ``sudo apt install python3-venv``) - proceed by creating a virtual environment in which to install all dependencies:
 
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Afterwards you can install the program/package itself via
+
+```
+pip install .
+```
 
 ## Usage
 
-To collect all the extracted patients in a single CSV file, run the command ``python -m uszparser`` with the correct flags and arguments, which can be displayed by providing the ``--help`` flag:
+After the installation you can run the program by typing
+
+```
+python -m uszparser
+```
+
+Add the flag ``--help`` to show the help text for the correct use of its arguments, which I will explain in the next section, which should look like this:
 
 ```
 usage: __main__.py [-h] [-j JSON] [-s SAVE] [-v] excel
@@ -108,10 +54,110 @@ optional arguments:
   -v, --verbose         Give progress update
 ```
 
-So, if you have a JSON file ``settings.json`` as well as the extraced Excel file ``extracted.xlsm`` in the current working directory, then you can run
+### Excel file structure
 
-```
-python -m uszparser -j settings.json -s /path/to/your/output.csv extracted.xlsm
+The Excel sheets can have any structure, as long as each sheet has the same layout. Also, right now it is necessary that the first sheet contains - in the first column with header ``KISIM`` - a list with the names of all sheets that are supposed to be read in. I will change this in the future, though, to be more flexible.
+
+
+### JSON settings
+
+Where on each sheet to find which information is stored in a JSON file. A simple example would look like this:
+
+```json
+{
+    "patient": {
+        "row": 1,
+        "col": 1,
+        "func": "str"
+    },
+    "age": {
+        "row": [3,4],
+        "col": 1,
+        "func": "age"
+    },
+    "HPV status": {
+        "row": 29,
+        "col": 1,
+        "choices": {
+            "positive": true,
+            "negative": false
+        }
+    }
+}
 ```
 
-to parse the Excel file and save its output as CSV table.
+This would yield the following CSV table:
+
+| patient |  age | HPV status |
+| :------ | ---: | :--------- |
+| Dieter  |   57 | TRUE       |
+| Clara   |   27 | FALSE      |
+| ...     |  ... | ...        |
+
+As you can see, each key in the JSON file corresponds to the name of a row. For each of those columns the JSON file provides the row number ``row`` and column number ``col`` of the information is refers to. Lastly, there is always either a ``func`` given or a set of ``choices``. In the latter case the program searches for the keys (here ``positive`` and ``negative``) and maps them to the values (``true`` and ``false``). If a function name is given through ``func``, then the program takes whatever it finds at the indicated position and passes it to the specified function ``func``. Currently, the program understands the following functions:
+
+| function         | description                                                                                  |
+| :--------------- | :------------------------------------------------------------------------------------------- |
+| ``nothing``      | do nothing                                                                                   |
+| ``str``          | interpret as lowercase string                                                                |
+| ``int``          | interpret as integer                                                                         |
+| ``float``        | interpret as decimal number                                                                  |
+| ``bool``         | interpret as boolean                                                                         |
+| ``date``         | convert string in the format of YYYY-MM-DD into a date object                                |
+| ``discard_char`` | convert e.g. "T2" to ``2`` by discarding the first character                                 |
+| ``age``          | compute the patient's age from birthday and diagnose date (both locations must be specified) |
+| ``find_subsite`` | find subsite in array                                                                        |
+| ``find_icd``     | find ICD code in array                                                                       |
+
+In the example above, I have used the ``func``tion ``age`` to compute the patient's age from two values at ``[3,1]`` and at ``[4,1]``.
+
+#### Multi-Header ``(pandas.MultiIndex)``
+
+If you want to extract many columns per instance/sheet it might be difficult to come up with unique non-conflicting column names. For that purpose you can use multi-row headers by simply making the dictionary in the JSON file deeper:
+
+```json
+{
+    "patient": {
+        "name": {
+            "row": 1,
+            "col": 1,
+            "func": "str"
+        },
+        "gender": {
+            "row": 2,
+            "col": 1,
+            "func": "str"
+        },
+        "age": {
+            "row": [3,4],
+            "col": 1,
+            "func": "age"
+        },
+    },
+    "condition": {
+        "HPV status": {
+            "row": 29,
+            "col": 1,
+            "choices": {
+                "positive": true,
+                "negative": false
+            }
+        },
+        "T-stage": {
+            "row": 25,
+            "col": 1,
+            "func": "discard_char"
+        }
+    }
+}
+```
+
+This JSON file would then give the following CSV table:
+
+| patient<br>name | patient<br>gender | patient<br>age | condition<br>HPV status | condition<br>T-stage |
+| :-------------- | :---------------- | -------------: | :---------------------- | :------------------- |
+| Dieter          | male              |             57 | TRUE                    | 3                    |
+| Clara           | female            |             27 | FALSE                   | 1                    |
+| ...             | ...               |            ... | ...                     | ...                  |
+
+> **Note:** The depth of the JSON dictionary must be the same for all entries. So, if you have decided on how many rows you want for the CSV table, you must structure the entire JSON file accordingly.

@@ -1,18 +1,23 @@
 #!/usr/bin/env python
 
-
 import pandas as pd
-import numpy as np
 from dateutil import parser as dtprs
 
-from itertools import product
-import json
 import re
+from typing import Dict, Tuple, List, Any, Optional
 
-# import tqdm & icecream
 from tqdm import tqdm
-from icecream import ic
-ic.configureOutput(prefix="", outputFunction=print)
+
+
+class SimpleLog(object):
+    """Very basic class for verbose output inspired by `icecream`."""
+    
+    def __init__(self, enabled: bool = True):
+        self.enabled = enabled
+        
+    def log(self, string, **kwargs):
+        if self.enabled:
+            print(string, **kwargs)
 
 
 def map_with_dict(options_dict):
@@ -21,12 +26,11 @@ def map_with_dict(options_dict):
     
     def func(raw):
         try:
-            return options_dict[f"{raw}".lower()]
+            return options_dict[raw]
         except KeyError:
             return None
         
     return func
-
 
 
 def discard_char(string):
@@ -38,10 +42,9 @@ def discard_char(string):
 
     res = findings[0]
     if res == 'x':
-        res = 2  # this is only the case for the M-stage
+        res = 2
 
     return res
-
 
 
 def age(diagnose_n_birth):
@@ -57,7 +60,6 @@ def age(diagnose_n_birth):
         age -= 1
 
     return age
-
 
 
 def find(arr, icd_code=False):
@@ -81,152 +83,97 @@ def find(arr, icd_code=False):
     return found
 
 
-
-def multiIndex_from_json(json_file):
-    """Create pandas MultiIndex with three layers from the set-up .json file."""
-    json_dict = json.load(json_file)
-    
-    # tuples for MultiIndex
-    idx_tuples = []
-    
-    # tuples for general patient info
-    for lvl2 in json_dict["patient"]:
-        for lvl3 in json_dict["patient"][lvl2]:
-            idx_tuples.append(("patient", lvl2, lvl3))
-            
-    # tuples for tumor info
-    for lvl3 in json_dict["tumor"]["1"]:
-        idx_tuples.append(("tumor", "1", lvl3))
-    
-    # tuples for involvement info
-    modalities = json_dict["modalities"]
-    sides = list(json_dict["modalities_cols"].keys())
-    lnls = json_dict["lnls"]
-    
-    for mod in modalities:
-        idx_tuples.append((mod, "info", "date"))
-        idx_tuples += list(product([mod], sides, lnls))
-    
-    # return MultiIndex from tuples
-    return idx_tuples, pd.MultiIndex.from_tuples(idx_tuples), json_dict
+def reformat_date(string):
+    """Bring dates into uniform format."""
+    string = string.split()[0]
+    dt = dtprs.parse(string)
+    return dt.strftime("%Y-%m-%d")
 
 
+def compute_hash(*args):
+    """Compute a hash vlaue from all given arguments."""
+    return hash(args)
 
-def parse(excel_data: pd.DataFrame, 
-          kisim_numbers: list, 
-          json_file,
-          verbose:bool = False) -> pd.DataFrame:
-    """Parse an excel dataset according to instructions in a JSON file.
-    
-    Args:
-        excel_data: Excel file as read in by pandas
-        kisim_numbers: list of KISIM numbers of the patients. They can be found 
-            on the first sheet of the Excel file and also on every sheet (which 
-            corresponds to one patient).
-        json_file: The opened JSON file that contains info on where to find 
-            which entry.
-        verbose: If `True`, print progress of parsing.
-        
-    Returns:
-        The parsed data."""
-    # list of functions that are supposed to be called for the 'func' keywords
-    # in the JSON file
-    func_dict = {"discard_char": discard_char,
-                 "find_subsite": find,
-                 "find_icd": lambda x: find(x, icd_code=True),
-                 "date": lambda x: dtprs.parse(x).date().strftime("%Y-%m-%d"),
-                 "age": age,
-                 "str": lambda x: str(x).lower(),
-                 "int": int,
-                 "float": float,
-                 "bool": bool,
-                 "nothing": lambda *args: args[0]}
-    
-    # be verbose
-    if verbose:
-        ic.enable()
+
+FUNC_DICT = {
+    "discard_char": discard_char,
+    "find_subsite": find,
+    "find_icd": lambda x: find(x, icd_code=True),
+    "date": reformat_date,
+    "age": age,
+    "str": lambda x: str(x).lower(),
+    "int": int,
+    "float": float,
+    "bool": bool,
+    "hash": compute_hash,
+    "nothing": lambda *args: args[0]
+}
+
+
+def recursive_traverse(dictionary: Dict[str, Any],
+                       redux_dict: Dict[Tuple[str], Dict[str, Any]] = {},
+                       current_branch: Tuple[str] = ()) -> List[Tuple[str]]:
+    """Recursively traverse an arbitrarily deep dictionary and compress its 
+    depth.
+    """
+    if "row" in dictionary:
+        redux_dict[current_branch] = dictionary
+        return redux_dict
     else:
-        ic.disable()
+        for key, item in dictionary.items():
+            new_branch = (*current_branch, key)
+            redux_dict = recursive_traverse(item, redux_dict, new_branch)
+
+        return redux_dict
+
+
+def parse(excel_sheets: Dict[Any, pd.DataFrame], 
+          dictionary: Dict[str, Any],
+          verbose: bool = False) -> pd.DataFrame:
+    """Parse sheets of an excel file according to instructions in `dictionary`.
+    """
+    redux_dict = recursive_traverse(dictionary)
     
-    _, multi_idx, json_dict = multiIndex_from_json(json_file)
-    ic("Created MultiIndex according to provided JSON file")
-
-    # new DataFrame where all the information will be stored
-    new_data = pd.DataFrame(columns=multi_idx)
-
-    # create iterator with progress bar (if verbose)
+    column_tuples = redux_dict.keys()
+    tuple_lengths = [len(tuple) for tuple in column_tuples]
+    
+    if len(set(tuple_lengths)) > 1:
+        raise ValueError("Depth of provided JSON file is inconsistent. All "
+                         "entries must be located at the same depth.")
+    
+    multi_index = pd.MultiIndex.from_tuples(tuples=column_tuples)
+    data_frame = pd.DataFrame(columns=multi_index)
+    
     if verbose:
-        enumerated_sheets = tqdm(
-            enumerate(excel_data.items()),
-            desc="Looping through sheets: "
+        sheets = tqdm(
+            excel_sheets.items(),
+            desc="Looping through sheets",
+            ncols=100
         )
     else:
-        enumerated_sheets = enumerate(excel_data.items())
+        sheets = excel_sheets.items()
     
-    # loop through sheets
-    for i, (kisim, sheet) in enumerated_sheets:
-        # make sure the KISIM number exists and matches with the list of patients
-        if (int(kisim) != sheet.iloc[1, 1]) or (kisim != kisim_numbers[i]):
-            raise Exception("KISIM numbers don't match")
-
-        # append new row to pandas DataFrame
+    for sheet_name, sheet in sheets:
         new_row = {}
 
-        # add info about patient & tumor to new row
-        for sup_category in ["patient", "tumor"]:
-            obj = json_dict[sup_category]
-            for category, columns in obj.items():
-                for column, details in columns.items():
-                    try:
-                        raw = sheet.iloc[details["row"], details["col"]].values
-                    except AttributeError:
-                        raw = sheet.iloc[details["row"], details["col"]]
-                    except ValueError:
-                        raw = None
-
-                    try:
-                        func = map_with_dict(details["options"])
-                    except KeyError:
-                        func = func_dict[details["func"]]
-                    
-                    new_row[(sup_category, category, column)] = func(raw)
-
-        # add involvement info to new row
-        modalities = json_dict["modalities"]
-        mod_rows = json_dict["modalities_rows"]
-        mod_info_row = json_dict["modalities_info_row"]
-        mod_info_cols = json_dict["modalities_info_cols"]
-
-        sides = list(json_dict["modalities_cols"].keys())
-        options_dict = {
-            "unknown": None,
-            "yes": True,
-            "no": False
-        }
-        func = map_with_dict(options_dict)
-
-        lnls = json_dict["lnls"]
-        l_rows = json_dict["lnls_rows"]
-
-        for i, mod in enumerate(modalities):
+        for column, instr in redux_dict.items():
             try:
-                date_str = sheet.iloc[mod_info_row, mod_info_cols[i]]
-                date_str = date_str.split()[0]
-                new_row[(mod, "info", "date")] = func_dict["date"](date_str)
+                raw = sheet.iloc[instr["row"], instr["col"]].values
+            except AttributeError:
+                raw = sheet.iloc[instr["row"], instr["col"]]
+            except ValueError:
+                raw = None
+                
+            try:
+                func = map_with_dict(instr["choices"])
+            except KeyError:
+                func = FUNC_DICT[instr["func"]]
+                
+            try:
+                new_row[column] = func(raw)
             except:
-                new_row[(mod, "info", "date")] = None
-
-            for s in sides:
-                s_cols = json_dict["modalities_cols"][s]
-                for k, l in enumerate(lnls):
-                    row = mod_rows[i] + l_rows[k]
-                    col = s_cols[i]
-                    new_row[(mod, s, l)] = func(sheet.iloc[row, col])
-
-        # add new row to the DataFrame
-        new_data = new_data.append(new_row, ignore_index=True)
-
-    ic("Parsing done")
-
-    # return created DataFrame
-    return new_data
+                new_row[column] = None
+            
+        data_frame = data_frame.append(new_row, ignore_index=True)
+        
+    return data_frame
