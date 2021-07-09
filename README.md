@@ -17,7 +17,7 @@ then, ``cd`` into it
 cd uszparser
 ```
 
-Now - assuming you have [``venv``](https://docs.python.org/3/library/venv.html) installed (if not you can probably install it with ``sudo apt install python3-venv``) - proceed by creating a virtual environment in which to install all dependencies:
+Now - assuming you have [``venv``](https://docs.python.org/3/library/venv.html) installed (if not you can probably install it with ``sudo apt install python3-venv``) - proceed by creating a virtual environment in which to install all dependencies. This isn't strictly necessary, you could just use ``pip`` (can be installed via ``sudo apt install python3-pip``) to install all packages, but it is good practice to keep everything contained to avoid mess-ups:
 
 ```
 python3 -m venv .venv
