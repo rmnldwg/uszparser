@@ -50,8 +50,8 @@ def discard_char(string):
 def age(diagnose_n_birth):
     """Compute age from array with two entries: Date of birth & date of 
     diagnosis."""
-    birth = dtprs.parse(diagnose_n_birth[0])
-    diag = dtprs.parse(diagnose_n_birth[1])
+    birth = dtprs.parse(diagnose_n_birth[0], dayfirst=True)
+    diag = dtprs.parse(diagnose_n_birth[1], dayfirst=True)
     
     age = diag.year - birth.year
 
@@ -86,7 +86,7 @@ def find(arr, icd_code=False):
 def reformat_date(string):
     """Bring dates into uniform format."""
     string = string.split()[0]
-    dt = dtprs.parse(string)
+    dt = dtprs.parse(string, dayfirst=True)
     return dt.strftime("%Y-%m-%d")
 
 
