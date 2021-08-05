@@ -31,6 +31,8 @@ Afterwards you can install the program/package itself via
 pip install .
 ```
 
+Just don't forget to deactivate the virtual environment afterwards. This is done simply with the command ``deactivate``.
+
 ## Usage
 
 After the installation you can run the program by typing
