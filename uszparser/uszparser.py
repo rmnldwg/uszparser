@@ -72,7 +72,7 @@ def find(arr, icd_code=False):
         idx = [i for i,item in enumerate(search) if "Yes" in item]
         found = find[idx[0]]
     except:
-        found = "unkown"
+        found = "unknown"
     
     if icd_code:
         found = found.replace("\xa0", "")
