@@ -47,7 +47,7 @@ first_sheet = pd.read_excel(
 kisim_numbers = first_sheet["KISIM"].to_list()
 sl.log("DONE")
 
-sl.log("Reading in all specified sheets...", end="")
+sl.log(f"Reading in all {len(kisim_numbers)} specified sheets...", end="")
 excel_data = pd.read_excel(args.excel,
                            sheet_name=kisim_numbers,
                            header=None)

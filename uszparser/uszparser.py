@@ -173,7 +173,7 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
                 new_row[column] = func(raw)
             except:
                 new_row[column] = None
-            
-        data_frame = data_frame.append(new_row, ignore_index=True)
+        
+        data_frame.loc[len(data_frame)] = new_row
         
     return data_frame
