@@ -44,7 +44,7 @@ python -m uszparser
 Add the flag ``--help`` to show the help text for the correct use of its arguments, which I will explain in the next section, which should look like this:
 
 ```
-usage: __main__.py [-h] [-j JSON] [-s SAVE] [-v] excel
+usage: __main__.py [-h] [-j JSON] [-s SAVE] [-t] [-v] excel
 
 positional arguments:
   excel                 Excel file that is supposed to be parsed
@@ -53,6 +53,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -j JSON, --json JSON  JSON file that contains what to parse
   -s SAVE, --save SAVE  Where to save the resulting CSV file? (Default: "./parsed.csv")
+  -t, --transform       Transform left/right to ipsi/contra based on primary tumor.
   -v, --verbose         Give progress update
 ```
 

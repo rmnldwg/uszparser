@@ -110,6 +110,42 @@ FUNC_DICT = {
 }
 
 
+def lr2ic(
+    data_frame: pd.DataFrame
+):
+    """Transform entries on a left-right basis to a ipsi-contra basis."""
+    modalities = list(set(data_frame.columns.get_level_values(level=0)))
+    modalities.remove("patient")
+    modalities.remove("tumor")
+    
+    swap = data_frame[("tumor", "1", "side")] == "right"
+    no_swap = data_frame[("tumor", "1", "side")] != "right"
+    lnls = list(data_frame[(modalities[0], "left")].columns)
+    
+    for mod in modalities:
+        for lnl in lnls:
+            normal_values = data_frame.loc[
+                no_swap, [(mod, "left", lnl), (mod, "right", lnl)]
+            ].values
+            swapped_values = data_frame.loc[
+                swap, [(mod, "right", lnl), (mod, "left", lnl)]
+            ].values
+            
+            data_frame.loc[
+                no_swap, [(mod, "left", lnl), (mod, "right", lnl)]
+            ] = normal_values
+            data_frame.loc[
+                swap, [(mod, "left", lnl), (mod, "right", lnl)]
+            ] = swapped_values
+    
+    data_frame = data_frame.rename(
+        {"left": "ipsi", "right": "contra"}, 
+        axis="columns", level=1
+    )
+    
+    return data_frame
+
+
 def recursive_traverse(dictionary: Dict[str, Any],
                        redux_dict: Dict[Tuple[str], Dict[str, Any]] = {},
                        current_branch: Tuple[str] = ()) -> List[Tuple[str]]:
