@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
+from datetime import timedelta
+from unittest.mock import NonCallableMagicMock
 import pandas as pd
+from numpy.random import default_rng
+import random
 from dateutil import parser as dtprs
 
 import re
-from typing import Dict, Tuple, List, Any, Optional
+from typing import Dict, Tuple, List, Any, Optional, Type
 
 from tqdm import tqdm
 
@@ -20,13 +24,13 @@ class SimpleLog(object):
             print(string, **kwargs)
 
 
-def map_with_dict(options_dict):
+def func_from(choices):
     """Return a function that maps a given input according to the given 
-    dictionary to the respective outputs."""
-    
+    dictionary to the respective outputs.
+    """
     def func(raw):
         try:
-            return options_dict[raw]
+            return choices[raw]
         except KeyError:
             return None
         
@@ -83,11 +87,13 @@ def find(arr, icd_code=False):
     return found
 
 
-def reformat_date(string):
+def reformat_date(string, rand_days_offset: int = 0):
     """Bring dates into uniform format."""
     string = string.split()[0]
-    dt = dtprs.parse(string, dayfirst=True)
-    return dt.strftime("%Y-%m-%d")
+    diagnose_date = dtprs.parse(string, dayfirst=True)
+    rand_offset = timedelta(days=rand_days_offset)
+    offset_diagnose_date = diagnose_date + rand_offset
+    return offset_diagnose_date.strftime("%Y-%m-%d")
 
 
 def compute_hash(*args):
@@ -165,6 +171,8 @@ def recursive_traverse(dictionary: Dict[str, Any],
 
 def parse(excel_sheets: Dict[Any, pd.DataFrame], 
           dictionary: Dict[str, Any],
+          offset_date: bool = True,
+          seed: Optional[int] = None,
           verbose: bool = False) -> pd.DataFrame:
     """Parse sheets of an excel file according to instructions in `dictionary`.
     """
@@ -189,8 +197,17 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
     else:
         sheets = excel_sheets.items()
     
+    if offset_date:
+        rng = default_rng(seed)
+        base_offset = rng.integers(low=-90, high=90)
+    
     for sheet_name, sheet in sheets:
         new_row = {}
+        
+        if offset_date:
+            patient_offset = int(base_offset + rng.integers(low=-30, high=30))
+        else:
+            patient_offset = 0
 
         for column, instr in redux_dict.items():
             try:
@@ -201,15 +218,17 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
                 raw = None
                 
             try:
-                func = map_with_dict(instr["choices"])
+                func = func_from(instr["choices"])
             except KeyError:
                 func = FUNC_DICT[instr["func"]]
                 
             try:
+                new_row[column] = func(raw, rand_days_offset=patient_offset)
+            except TypeError as te:
                 new_row[column] = func(raw)
             except:
                 new_row[column] = None
         
         data_frame.loc[len(data_frame)] = new_row
-        
+
     return data_frame

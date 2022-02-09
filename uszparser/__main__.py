@@ -26,12 +26,22 @@ parser.add_argument(
 parser.add_argument(
     "-s", "--save", 
     default=Path('.').resolve() / "parsed.csv",
-    help="Where to save the resulting CSV file? (Default: \"./parsed.csv\")"
+    help="Where to save the resulting CSV file? (Default: './parsed.csv')"
 )
 parser.add_argument(
     "-t", "--transform", 
     action="store_true", 
     help="Transform left/right to ipsi/contra based on primary tumor."
+)
+parser.add_argument(
+    "-o", "--offset",
+    action="store_true",
+    help="Offset all dates by a random amount of days (same within a patient)"
+)
+parser.add_argument(
+    "--seed",
+    default=None, type=int,
+    help="Seed value for random offset of dates."
 )
 parser.add_argument(
     "-v", "--verbose", 
@@ -67,7 +77,12 @@ excel_data = pd.read_excel(args.excel,
 sl.log("DONE")
 
 sl.log("Parsing loaded sheets according to JSON specs...", end="")
-data_frame = parse(excel_data, dictionary, verbose=args.verbose)
+data_frame = parse(
+    excel_data, dictionary, 
+    offset_date=args.offset, 
+    seed=args.seed, 
+    verbose=args.verbose
+)
 sl.log("DONE")
 
 if args.transform:
