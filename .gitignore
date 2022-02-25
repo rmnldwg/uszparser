@@ -133,4 +133,3 @@ dmypy.json
 
 # don't add CSV with patient specific info or the settings on how to get there
 *.csv
-*.json

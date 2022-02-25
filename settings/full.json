@@ -1,0 +1,1543 @@
+{
+    "patient": {
+        "general": {
+            "ID": {
+                "row": 1,
+                "col": 1,
+                "func": "nothing"
+            },
+            "sex": {
+                "row": 2,
+                "col": 1,
+                "func": "str"
+            },
+            "age": {
+                "row": [3,4],
+                "col": 1,
+                "func": "age"
+            },
+            "diagnosedate": {
+                "row": 4,
+                "col": 1,
+                "func": "date"
+            }
+        },
+        "abuse": {
+            "alcohol": {
+                "row": 12,
+                "col": 1,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "nicotine": {
+                "row": 13,
+                "col": 1,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "condition": {
+            "HPV": {
+                "row": 29,
+                "col": 1,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "neck-dissection": {
+                "row": 9,
+                "col": 1,
+                "choices": {
+                    "unilateral": true,
+                    "no": false
+                }
+            }
+        },
+        "stage": {
+            "N": {
+                "row": 26,
+                "col": 1,
+                "func": "discard_char"
+            },
+            "M": {
+                "row": 27,
+                "col": 1,
+                "func": "discard_char"
+            }
+        }
+    },
+    "tumor": {
+        "1": {
+            "location": {
+                "row": 31,
+                "col": 2,
+                "func": "str"
+            },
+            "subsite": {
+                "row": [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88],
+                "col": [4,5],
+                "func": "find_subsite"
+            },
+            "ICD-O-3": {
+                "row": [39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88],
+                "col": [4,3],
+                "func": "find_icd"
+            },
+            "side": {
+                "row": 33,
+                "col": 2,
+                "func": "str"
+            },
+            "extension": {
+                "row": 32,
+                "col": 2,
+                "choices": {
+                    "positive": true,
+                    "negative": false
+                }
+            },
+            "size": {
+                "row": null,
+                "col": null,
+                "func": "keep"
+            },
+            "prefix": {
+                "row": 24,
+                "col": 1,
+                "func": "str"
+            },
+            "stage": {
+                "row": 25,
+                "col": 1,
+                "func": "discard_char"
+            }
+        }
+    },
+    "FNA": {
+        "info": {
+            "date": {
+                "row": 30,
+                "col": 3,
+                "func": "date"
+            }
+        },
+        "right": {
+            "I": {
+                "row": 94,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 95,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 96,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 97,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 98,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 99,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 100,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 101,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 104,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 108,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 111,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 114,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 115,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 116,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "left": {
+            "I": {
+                "row": 94,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 95,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 96,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 97,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 98,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 99,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 100,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 101,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 104,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 108,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 111,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 114,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 115,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 116,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        }
+    },
+    "PET": {
+        "info": {
+            "date": {
+                "row": 30,
+                "col": 4,
+                "func": "date"
+            }
+        },
+        "right": {
+            "I": {
+                "row": 123,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 124,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 125,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 126,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 127,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 128,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 129,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 130,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 133,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 137,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 140,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 143,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 144,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 145,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "left": {
+            "I": {
+                "row": 123,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 124,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 125,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 126,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 127,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 128,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 129,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 130,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 133,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 137,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 140,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 143,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 144,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 145,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        }
+    },
+    "CT": {
+        "info": {
+            "date": {
+                "row": 30,
+                "col": 5,
+                "func": "date"
+            }
+        },
+        "right": {
+            "I": {
+                "row": 151,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 152,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 153,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 154,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 155,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 156,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 157,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 158,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 161,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 165,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 168,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 171,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 172,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 173,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "left": {
+            "I": {
+                "row": 151,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 152,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 153,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 154,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 155,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 156,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 157,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 158,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 161,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 165,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 168,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 171,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 172,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 173,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        }
+    },
+    "MRI": {
+        "info": {
+            "date": {
+                "row": 30,
+                "col": 6,
+                "func": "date"
+            }
+        },
+        "right": {
+            "I": {
+                "row": 179,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 180,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 181,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 182,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 183,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 184,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 185,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 186,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 189,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 193,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 196,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 199,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 200,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 201,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "left": {
+            "I": {
+                "row": 179,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 180,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 181,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 182,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 183,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 184,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 185,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 186,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 189,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 193,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 196,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 199,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 200,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 201,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        }
+    },
+    "pCT": {
+        "info": {
+            "date": {
+                "row": 30,
+                "col": 2,
+                "func": "date"
+            }
+        },
+        "right": {
+            "I": {
+                "row": 209,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 210,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 211,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 212,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 213,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 214,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 215,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 216,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 219,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 223,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 226,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 229,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 230,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 231,
+                "col": 6,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "left": {
+            "I": {
+                "row": 209,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 210,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 211,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 212,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 213,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 214,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 215,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 216,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 219,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 223,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 226,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 229,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 230,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 231,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        }
+    },
+    "path": {
+        "info": {
+            "date": {
+                "row": 30,
+                "col": 7,
+                "func": "date"
+            }
+        },
+        "right": {
+            "I": {
+                "row": 238,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 239,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 240,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 241,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 242,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 243,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 244,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 245,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 248,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 252,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 255,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 258,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 259,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 260,
+                "col": 7,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        },
+        "left": {
+            "I": {
+                "row": 238,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ia": {
+                "row": 239,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "Ib": {
+                "row": 240,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "II": {
+                "row": 241,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIa": {
+                "row": 242,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IIb": {
+                "row": 243,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "III": {
+                "row": 244,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IV": {
+                "row": 245,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "V": {
+                "row": 248,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VI": {
+                "row": 252,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VII": {
+                "row": 255,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "VIII": {
+                "row": 258,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "IX": {
+                "row": 259,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "X": {
+                "row": 260,
+                "col": 2,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            }
+        }
+    }
+}
