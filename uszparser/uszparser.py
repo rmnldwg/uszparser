@@ -112,7 +112,8 @@ FUNC_DICT = {
     "float": float,
     "bool": bool,
     "hash": compute_hash,
-    "nothing": lambda *args: args[0]
+    "keep": lambda *args: args[0],
+    "nothing": lambda *args: None
 }
 
 
