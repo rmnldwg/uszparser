@@ -163,4 +163,5 @@ This JSON file would then give the following CSV table:
 | Clara           | female            |             27 | FALSE                   | 1                    |
 | ...             | ...               |            ... | ...                     | ...                  |
 
-> **Note:** The depth of the JSON dictionary must be the same for all entries. So, if you have decided on how many rows you want for the CSV table, you must structure the entire JSON file accordingly.
+> [!NOTE]
+> The depth of the JSON dictionary must be the same for all entries. So, if you have decided on how many rows you want for the CSV table, you must structure the entire JSON file accordingly.
