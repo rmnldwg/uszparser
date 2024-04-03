@@ -1,13 +1,13 @@
 """
-Program for parsing the excel file that was created by Bertrand Pouymayou 
-and then filled with patients by Jean-Marc Hoffmann. The excel file's 
-particular structure makes it necessary to hard-code the location of all 
+Program for parsing the excel file that was created by Bertrand Pouymayou
+and then filled with patients by Jean-Marc Hoffmann. The excel file's
+particular structure makes it necessary to hard-code the location of all
 information. It is stored in the accompanying JSON file.
 """
 import argparse
-from pathlib import Path
 import json
 import time
+from pathlib import Path
 
 import pandas as pd
 
@@ -67,7 +67,7 @@ def main():
     start = time.time()
 
     sl.log("Opening JSON specification file...", end="")
-    with open(args.json, mode="r", ecnoding="utf-8") as json_file:
+    with open(args.json, ecnoding="utf-8") as json_file:
         dictionary = json.load(json_file)
     sl.log("DONE")
 

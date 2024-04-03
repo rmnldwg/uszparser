@@ -29,6 +29,14 @@ dynamic = ["version"]
 [project.urls]
 source = "https://github.com/rmnldwg/uszparser"
 
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "isort",
+    "pycln",
+    "pylint",
+]
+
 [project.scripts]
 uszparser = "uszparser:main"
 

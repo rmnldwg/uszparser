@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
-from datetime import timedelta
-import pandas as pd
-from numpy.random import default_rng
-from dateutil import parser as dtprs
-
 import re
-from typing import Dict, Tuple, List, Any, Optional
+from datetime import timedelta
+from typing import Any
 
+import pandas as pd
+from dateutil import parser as dtprs
+from numpy.random import default_rng
 from tqdm import tqdm
 
 
-class SimpleLog(object):
+class SimpleLog:
     """Very basic class for verbose output inspired by `icecream`."""
 
     def __init__(self, enabled: bool = True):
@@ -153,10 +152,10 @@ def lr2ic(
 
 
 def recursive_traverse(
-    dictionary: Dict[str, Any],
-    redux_dict: Dict[Tuple[str], Dict[str, Any]] | None = None,
-    current_branch: Tuple[str] = (),
-) -> List[Tuple[str]]:
+    dictionary: dict[str, Any],
+    redux_dict: dict[tuple[str], dict[str, Any]] | None = None,
+    current_branch: tuple[str] = (),
+) -> list[tuple[str]]:
     """Recursively traverse an arbitrarily deep dictionary and compress its
     depth.
     """
@@ -174,10 +173,10 @@ def recursive_traverse(
 
 
 def parse(
-    excel_sheets: Dict[Any, pd.DataFrame],
-    dictionary: Dict[str, Any],
+    excel_sheets: dict[Any, pd.DataFrame],
+    dictionary: dict[str, Any],
     offset_date: bool = True,
-    seed: Optional[int] = None,
+    seed: int | None = None,
     verbose: bool = False,
 ) -> pd.DataFrame:
     """Parse sheets of an excel file according to instructions in `dictionary`.
