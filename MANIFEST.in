@@ -1,7 +1,0 @@
-include README.md
-include LICENSE
-include requirements.txt
-graft uszparser
-recursive-exclude * *.py[co]
-include versioneer.py
-include uszparser/_version.py
