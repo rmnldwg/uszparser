@@ -1,31 +1,29 @@
 #!/usr/bin/env python
 
 from datetime import timedelta
-from unittest.mock import NonCallableMagicMock
 import pandas as pd
 from numpy.random import default_rng
-import random
 from dateutil import parser as dtprs
 
 import re
-from typing import Dict, Tuple, List, Any, Optional, Type
+from typing import Dict, Tuple, List, Any, Optional
 
 from tqdm import tqdm
 
 
 class SimpleLog(object):
     """Very basic class for verbose output inspired by `icecream`."""
-    
+
     def __init__(self, enabled: bool = True):
         self.enabled = enabled
-        
+
     def log(self, string, **kwargs):
         if self.enabled:
             print(string, **kwargs)
 
 
 def func_from(choices):
-    """Return a function that maps a given input according to the given 
+    """Return a function that maps a given input according to the given
     dictionary to the respective outputs.
     """
     def func(raw):
@@ -33,7 +31,7 @@ def func_from(choices):
             return choices[raw]
         except KeyError:
             return None
-        
+
     return func
 
 
@@ -41,8 +39,9 @@ def discard_char(string):
     """Raises an exception if there are two numbers. E.g. in 'N01'."""
     findings = re.findall("[0-9]|x", string)
     if len(findings) != 1:
-        raise Exception(
-            f"string should only contain ONE number, but found {len(findings)}")
+        raise ValueError(
+            f"string should only contain ONE number, but found {len(findings)}"
+        )
 
     res = findings[0]
     if res == 'x':
@@ -52,11 +51,11 @@ def discard_char(string):
 
 
 def age(diagnose_n_birth):
-    """Compute age from array with two entries: Date of birth & date of 
+    """Compute age from array with two entries: Date of birth & date of
     diagnosis."""
     birth = dtprs.parse(diagnose_n_birth[0], dayfirst=True)
     diag = dtprs.parse(diagnose_n_birth[1], dayfirst=True)
-    
+
     age = diag.year - birth.year
 
     if ((diag.month < birth.month)
@@ -67,23 +66,23 @@ def age(diagnose_n_birth):
 
 
 def find(arr, icd_code=False):
-    """Search in the first column of `arr` for a 'Yes' and return the respective 
+    """Search in the first column of `arr` for a 'Yes' and return the respective
     entry in the second column."""
     search = [str(item) for item in arr[:,0]]
     find = [str(item) for item in arr[:,1]]
-    
+
     try:
         idx = [i for i,item in enumerate(search) if "Yes" in item]
         found = find[idx[0]]
     except:
         found = "unknown"
-    
+
     if icd_code:
         found = found.replace("\xa0", "")
         found = found.replace(" ", "")
     else:
         found = found.lower()
-        
+
     return found
 
 
@@ -124,11 +123,11 @@ def lr2ic(
     modalities = list(set(data_frame.columns.get_level_values(level=0)))
     modalities.remove("patient")
     modalities.remove("tumor")
-    
+
     swap = data_frame[("tumor", "1", "side")] == "right"
     no_swap = data_frame[("tumor", "1", "side")] != "right"
     lnls = list(data_frame[(modalities[0], "left")].columns)
-    
+
     for mod in modalities:
         for lnl in lnls:
             normal_values = data_frame.loc[
@@ -137,28 +136,32 @@ def lr2ic(
             swapped_values = data_frame.loc[
                 swap, [(mod, "right", lnl), (mod, "left", lnl)]
             ].values
-            
+
             data_frame.loc[
                 no_swap, [(mod, "left", lnl), (mod, "right", lnl)]
             ] = normal_values
             data_frame.loc[
                 swap, [(mod, "left", lnl), (mod, "right", lnl)]
             ] = swapped_values
-    
+
     data_frame = data_frame.rename(
-        {"left": "ipsi", "right": "contra"}, 
+        {"left": "ipsi", "right": "contra"},
         axis="columns", level=1
     )
-    
+
     return data_frame
 
 
-def recursive_traverse(dictionary: Dict[str, Any],
-                       redux_dict: Dict[Tuple[str], Dict[str, Any]] = {},
-                       current_branch: Tuple[str] = ()) -> List[Tuple[str]]:
-    """Recursively traverse an arbitrarily deep dictionary and compress its 
+def recursive_traverse(
+    dictionary: Dict[str, Any],
+    redux_dict: Dict[Tuple[str], Dict[str, Any]] | None = None,
+    current_branch: Tuple[str] = (),
+) -> List[Tuple[str]]:
+    """Recursively traverse an arbitrarily deep dictionary and compress its
     depth.
     """
+    redux_dict = redux_dict or {}
+
     if "row" in dictionary:
         redux_dict[current_branch] = dictionary
         return redux_dict
@@ -170,25 +173,29 @@ def recursive_traverse(dictionary: Dict[str, Any],
         return redux_dict
 
 
-def parse(excel_sheets: Dict[Any, pd.DataFrame], 
-          dictionary: Dict[str, Any],
-          offset_date: bool = True,
-          seed: Optional[int] = None,
-          verbose: bool = False) -> pd.DataFrame:
+def parse(
+    excel_sheets: Dict[Any, pd.DataFrame],
+    dictionary: Dict[str, Any],
+    offset_date: bool = True,
+    seed: Optional[int] = None,
+    verbose: bool = False,
+) -> pd.DataFrame:
     """Parse sheets of an excel file according to instructions in `dictionary`.
     """
     redux_dict = recursive_traverse(dictionary)
-    
+
     column_tuples = redux_dict.keys()
     tuple_lengths = [len(tuple) for tuple in column_tuples]
-    
+
     if len(set(tuple_lengths)) > 1:
-        raise ValueError("Depth of provided JSON file is inconsistent. All "
-                         "entries must be located at the same depth.")
-    
+        raise ValueError(
+            "Depth of provided JSON file is inconsistent. All entries must be located "
+            "at the same depth."
+        )
+
     multi_index = pd.MultiIndex.from_tuples(tuples=column_tuples)
     data_frame = pd.DataFrame(columns=multi_index)
-    
+
     if verbose:
         sheets = tqdm(
             excel_sheets.items(),
@@ -197,14 +204,14 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
         )
     else:
         sheets = excel_sheets.items()
-    
+
     if offset_date:
         rng = default_rng(seed)
         base_offset = rng.integers(low=-90, high=90)
-    
-    for sheet_name, sheet in sheets:
+
+    for _name, sheet in sheets:
         new_row = {}
-        
+
         if offset_date:
             patient_offset = int(base_offset + rng.integers(low=-30, high=30))
         else:
@@ -217,19 +224,19 @@ def parse(excel_sheets: Dict[Any, pd.DataFrame],
                 raw = sheet.iloc[instr["row"], instr["col"]]
             except ValueError:
                 raw = None
-                
+
             try:
                 func = func_from(instr["choices"])
             except KeyError:
                 func = FUNC_DICT[instr["func"]]
-                
+
             try:
                 new_row[column] = func(raw, rand_days_offset=patient_offset)
-            except TypeError as te:
+            except TypeError:
                 new_row[column] = func(raw)
             except:
                 new_row[column] = None
-        
+
         data_frame.loc[len(data_frame)] = new_row
 
     return data_frame
