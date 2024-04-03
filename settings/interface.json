@@ -70,6 +70,49 @@
                 "col": 1,
                 "func": "discard_char"
             }
+        },
+        "follow_up": {
+            "date": {
+                "row": 10,
+                "col": 5,
+                "func": "date"
+            },
+            "death": {
+                "row": 11,
+                "col": 5,
+                "choices": {
+                    "no": false,
+                    "yes": true
+                }
+            }
+        },
+        "recurrence": {
+            "locoregional": {
+                "row": 12,
+                "col": 5,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "locoregional_date": {
+                "row": 12,
+                "col": 7,
+                "func": "date"
+            },
+            "distant": {
+                "row": 13,
+                "col": 5,
+                "choices": {
+                    "yes": true,
+                    "no": false
+                }
+            },
+            "distant_date": {
+                "row": 13,
+                "col": 7,
+                "func": "date"
+            }
         }
     },
     "tumor": {
