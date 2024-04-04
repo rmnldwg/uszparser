@@ -31,7 +31,8 @@ Afterwards you can install the program/package itself via
 pip install .
 ```
 
-Just don't forget to deactivate the virtual environment afterwards. This is done simply with the command ``deactivate``.
+> [!NOTE]
+> To deactivate the virtual environment when you're done using the uszparser, simply run the command ``deactivate``.
 
 ## Usage
 
