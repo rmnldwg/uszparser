@@ -67,7 +67,7 @@ def main():
     start = time.time()
 
     sl.log("Opening JSON specification file...", end="")
-    with open(args.json, ecnoding="utf-8") as json_file:
+    with open(args.json, encoding="utf-8") as json_file:
         dictionary = json.load(json_file)
     sl.log("DONE")
 
@@ -81,9 +81,11 @@ def main():
     sl.log("DONE")
 
     sl.log(f"Reading in all {len(kisim_numbers)} specified sheets...", end="")
-    excel_data = pd.read_excel(args.excel,
-                            sheet_name=kisim_numbers,
-                            header=None)
+    excel_data = pd.read_excel(
+        args.excel,
+        sheet_name=kisim_numbers,
+        header=None,
+    )
     sl.log("DONE")
 
     sl.log("Parsing loaded sheets according to JSON specs...", end="")
