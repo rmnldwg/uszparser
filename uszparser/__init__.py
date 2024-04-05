@@ -77,7 +77,8 @@ def main():
         usecols='A',
         dtype={"KISIM": str}
     )
-    kisim_numbers = first_sheet["KISIM"].to_list()
+    is_valid = first_sheet["KISIM"].str.match(r"[0-9]+")
+    kisim_numbers = first_sheet.loc[is_valid, "KISIM"].to_list()
     sl.log("DONE")
 
     sl.log(f"Reading in all {len(kisim_numbers)} specified sheets...", end="")
