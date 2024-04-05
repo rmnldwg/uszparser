@@ -45,18 +45,26 @@ python -m uszparser
 Add the flag ``--help`` to show the help text for the correct use of its arguments, which I will explain in the next section, which should look like this:
 
 ```
-usage: __main__.py [-h] [-j JSON] [-s SAVE] [-t] [-v] excel
+usage: uszparser [-h] [-j JSON] [-s SAVE] [-t] [-o] [--seed SEED] [-v] [-f] excel
+
+Program for parsing the excel file that was created by Bertrand Pouymayou. The excel file's particular structure makes it necessary to hard-code the location of all information. It is stored in the accompanying JSON file.
 
 positional arguments:
   excel                 Excel file that is supposed to be parsed
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -j JSON, --json JSON  JSON file that contains what to parse
-  -s SAVE, --save SAVE  Where to save the resulting CSV file? (Default: "./parsed.csv")
+  -s SAVE, --save SAVE  Where to save the resulting CSV file? (Default: './parsed.csv')
   -t, --transform       Transform left/right to ipsi/contra based on primary tumor.
+  -o, --offset          Offset all dates by a random amount of days (same within a patient)
+  --seed SEED           Seed value for random offset of dates.
   -v, --verbose         Give progress update
+  -f, --fail-quickly    Fail on first parser error.
 ```
+
+> [!TIP]
+> When you provide the additional flag `-v`, you will also get informed in which patients and which cells the parsing failed.
 
 ### Excel file structure
 
