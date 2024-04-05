@@ -77,7 +77,7 @@ def main():
         usecols='A',
         dtype={"KISIM": str}
     )
-    is_valid = first_sheet["KISIM"].str.match(r"[0-9]+")
+    is_valid = first_sheet["KISIM"].str.match(r"[0-9]+", na=False)
     kisim_numbers = first_sheet.loc[is_valid, "KISIM"].to_list()
     sl.log("DONE")
 
