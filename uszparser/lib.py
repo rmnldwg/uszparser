@@ -2,7 +2,8 @@
 
 import re
 from datetime import timedelta
-from typing import Any
+from typing import Any, Literal
+import warnings
 
 import pandas as pd
 from dateutil import parser as dtprs
@@ -25,7 +26,7 @@ def func_from(choices):
     """Return a function that maps a given input according to the given
     dictionary to the respective outputs.
     """
-    def func(raw):
+    def func(raw, *_a, **_kw):
         try:
             return choices[raw]
         except KeyError:
@@ -88,10 +89,14 @@ def find(arr, *_args, icd_code=False, **_kwargs):
     return found
 
 
-def reformat_date(string, *_args, rand_days_offset: int = 0, **_kwargs):
+def reformat_date(value, *_args, rand_days_offset: int = 0, **_kwargs):
     """Bring dates into uniform format."""
-    string = string.split()[0]
-    diagnose_date = dtprs.parse(string, dayfirst=True)
+    value = str(value)
+    try:
+        diagnose_date = dtprs.parse(value, dayfirst=True)
+    except dtprs.ParserError:
+        return None
+
     rand_offset = timedelta(days=rand_days_offset)
     offset_diagnose_date = diagnose_date + rand_offset
     return offset_diagnose_date.strftime("%Y-%m-%d")
@@ -114,7 +119,7 @@ FUNC_DICT = {
     "bool": lambda x, *_a, **_kw: bool(x),
     "hash": compute_hash,
     "keep": lambda *args, **_kw: args[0],
-    "nothing": lambda *args, **_kw: None
+    "nothing": lambda *_a, **_kw: None
 }
 
 
@@ -154,91 +159,117 @@ def lr2ic(
     return data_frame
 
 
-def recursive_traverse(
-    dictionary: dict[str, Any],
+def flatten_recursively(
+    nested: dict[str, Any],
     redux_dict: dict[tuple[str], dict[str, Any]] | None = None,
     current_branch: tuple[str] = (),
 ) -> list[tuple[str]]:
-    """Recursively traverse an arbitrarily deep dictionary and compress its
-    depth.
-    """
+    """Recursively traverse a nested dict and flatten it."""
     redux_dict = redux_dict or {}
 
-    if "row" in dictionary:
-        redux_dict[current_branch] = dictionary
+    if "row" in nested:
+        redux_dict[current_branch] = nested
         return redux_dict
     else:
-        for key, item in dictionary.items():
+        for key, item in nested.items():
             new_branch = (*current_branch, key)
-            redux_dict = recursive_traverse(item, redux_dict, new_branch)
+            redux_dict = flatten_recursively(item, redux_dict, new_branch)
 
         return redux_dict
 
 
-def parse(
+def warning_from_execption(exc):
+    """Convert an exception to a warning.
+
+    Taken from https://stackoverflow.com/a/77868794
+    """
+    warning = RuntimeWarning(*exc.args)
+    warning.with_traceback(exc.__traceback__)
+    return warning
+
+
+def parse_sheet(
+    sheet,
+    mapping,
+    offset: int = 0,
+    handling: Literal["raise", "warn", "ignore"] = "warn",
+):
+    """Parse one Excel sheet according to the mapping instructions."""
+    new_row = {}
+
+    for column, instr in mapping.items():
+        row, col = instr["row"], instr["col"]
+        try:
+            raw = sheet.iloc[row, col].values
+        except AttributeError:
+            raw = sheet.iloc[row, col]
+        except ValueError:
+            raw = None
+
+        try:
+            func = func_from(instr["choices"])
+        except KeyError:
+            func = FUNC_DICT[instr["func"]]
+
+        try:
+            new_row[column] = func(raw, rand_days_offset=offset)
+        except Exception as exc:
+            id = sheet.iloc[1,1]
+            msg = f"error in cell(s) [{col},{row}] (should be mapped to {column}) of patient {id}:"
+            if handling == "raise":
+                raise Exception(msg) from exc
+            if handling == "warn":
+                print(msg)
+                warnings.warn(warning_from_execption(exc))
+            new_row[column] = None
+
+    return new_row
+
+
+def parse_file(
     excel_sheets: dict[Any, pd.DataFrame],
-    dictionary: dict[str, Any],
-    offset_date: bool = True,
+    mapping: dict[str, Any],
+    anonymise_date: bool = True,
     seed: int | None = None,
     verbose: bool = False,
+    fail_quickly: bool = True,
 ) -> pd.DataFrame:
-    """Parse sheets of an excel file according to instructions in `dictionary`.
-    """
-    redux_dict = recursive_traverse(dictionary)
+    """Parse sheets of an excel file according to instructions in `mapping`."""
+    mapping = flatten_recursively(mapping)
+    column_headers = mapping.keys()
+    header_lengths = [len(tuple) for tuple in column_headers]
 
-    column_tuples = redux_dict.keys()
-    tuple_lengths = [len(tuple) for tuple in column_tuples]
-
-    if len(set(tuple_lengths)) > 1:
+    if len(set(header_lengths)) > 1:
         raise ValueError(
             "Depth of provided JSON file is inconsistent. All entries must be located "
             "at the same depth."
         )
 
-    multi_index = pd.MultiIndex.from_tuples(tuples=column_tuples)
+    multi_index = pd.MultiIndex.from_tuples(tuples=column_headers)
     data_frame = pd.DataFrame(columns=multi_index)
 
+    handling = "raise" if fail_quickly else "ignore"
     if verbose:
         sheets = tqdm(
             excel_sheets.items(),
             desc="Looping through sheets",
             ncols=100
         )
+        handling = "warn"
     else:
         sheets = excel_sheets.items()
 
-    if offset_date:
+    if anonymise_date:
         rng = default_rng(seed)
         base_offset = rng.integers(low=-90, high=90)
 
     for _name, sheet in sheets:
-        new_row = {}
-
-        if offset_date:
+        if anonymise_date:
             patient_offset = int(base_offset + rng.integers(low=-30, high=30))
         else:
             patient_offset = 0
 
-        for column, instr in redux_dict.items():
-            try:
-                raw = sheet.iloc[instr["row"], instr["col"]].values
-            except AttributeError:
-                raw = sheet.iloc[instr["row"], instr["col"]]
-            except ValueError:
-                raw = None
-
-            try:
-                func = func_from(instr["choices"])
-            except KeyError:
-                func = FUNC_DICT[instr["func"]]
-
-            try:
-                new_row[column] = func(raw, rand_days_offset=patient_offset)
-            except TypeError:
-                new_row[column] = func(raw)
-            except:
-                new_row[column] = None
-
+        new_row = parse_sheet(sheet, mapping, offset=patient_offset, handling=handling)
         data_frame.loc[len(data_frame)] = new_row
 
     return data_frame

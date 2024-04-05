@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from uszparser._version import version
-from uszparser.lib import SimpleLog, lr2ic, parse
+from uszparser.lib import SimpleLog, lr2ic, parse_file
 
 __author__ = "Roman Ludwig"
 __license__ = "MIT"
@@ -58,6 +58,11 @@ def main():
         action="store_true",
         help="Give progress update"
     )
+    parser.add_argument(
+        "-f", "--fail-quickly",
+        action="store_true",
+        help="Fail on first parser error."
+    )
     args = parser.parse_args()
 
     # be verbose
@@ -68,7 +73,7 @@ def main():
 
     sl.log("Opening JSON specification file...", end="")
     with open(args.json, encoding="utf-8") as json_file:
-        dictionary = json.load(json_file)
+        mapping = json.load(json_file)
     sl.log("DONE")
 
     sl.log("Extracting sheet names from first sheet...", end="")
@@ -90,11 +95,13 @@ def main():
     sl.log("DONE")
 
     sl.log("Parsing loaded sheets according to JSON specs...", end="")
-    data_frame = parse(
-        excel_data, dictionary,
-        offset_date=args.offset,
+    data_frame = parse_file(
+        excel_data,
+        mapping,
+        anonymise_date=args.offset,
         seed=args.seed,
-        verbose=args.verbose
+        verbose=args.verbose,
+        fail_quickly=args.fail_quickly,
     )
     sl.log("DONE")
 
