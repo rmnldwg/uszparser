@@ -34,9 +34,12 @@ def func_from(choices):
     return func
 
 
-def discard_char(string):
+def discard_char(value, *_args, **_kwargs):
     """Raises an exception if there are two numbers. E.g. in 'N01'."""
-    findings = re.findall("[0-9]|x", string)
+    if isinstance(value, (int, float)):
+        return int(value)
+
+    findings = re.findall("[0-9]|x", value)
     if len(findings) != 1:
         raise ValueError(
             f"string should only contain ONE number, but found {len(findings)}"
@@ -46,10 +49,10 @@ def discard_char(string):
     if res == 'x':
         res = 2
 
-    return res
+    return int(res)
 
 
-def age(diagnose_n_birth):
+def age(diagnose_n_birth, *_args, **_kwargs):
     """Compute age from array with two entries: Date of birth & date of
     diagnosis."""
     birth = dtprs.parse(diagnose_n_birth[0], dayfirst=True)
@@ -64,7 +67,7 @@ def age(diagnose_n_birth):
     return age
 
 
-def find(arr, icd_code=False):
+def find(arr, *_args, icd_code=False, **_kwargs):
     """Search in the first column of `arr` for a 'Yes' and return the respective
     entry in the second column."""
     search = [str(item) for item in arr[:,0]]
@@ -85,7 +88,7 @@ def find(arr, icd_code=False):
     return found
 
 
-def reformat_date(string, rand_days_offset: int = 0):
+def reformat_date(string, *_args, rand_days_offset: int = 0, **_kwargs):
     """Bring dates into uniform format."""
     string = string.split()[0]
     diagnose_date = dtprs.parse(string, dayfirst=True)
@@ -94,7 +97,7 @@ def reformat_date(string, rand_days_offset: int = 0):
     return offset_diagnose_date.strftime("%Y-%m-%d")
 
 
-def compute_hash(*args):
+def compute_hash(*args, **_kwargs):
     """Compute a hash vlaue from all given arguments."""
     return hash(args)
 
@@ -102,16 +105,16 @@ def compute_hash(*args):
 FUNC_DICT = {
     "discard_char": discard_char,
     "find_subsite": find,
-    "find_icd": lambda x: find(x, icd_code=True),
+    "find_icd": lambda x, *_a, **_kw: find(x, icd_code=True),
     "date": reformat_date,
     "age": age,
-    "str": lambda x: str(x).lower(),
-    "int": int,
-    "float": float,
-    "bool": bool,
+    "str": lambda x, *_a, **_kw: str(x).lower(),
+    "int": lambda x, *_a, **_kw: int(x),
+    "float": lambda x, *_a, **_kw: float(x),
+    "bool": lambda x, *_a, **_kw: bool(x),
     "hash": compute_hash,
-    "keep": lambda *args: args[0],
-    "nothing": lambda *args: None
+    "keep": lambda *args, **_kw: args[0],
+    "nothing": lambda *args, **_kw: None
 }
 
 
