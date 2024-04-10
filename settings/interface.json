@@ -149,6 +149,11 @@
                     "negative": false
                 }
             },
+            "dist_mid": {
+                "row": 34,
+                "col": 2,
+                "func": "float"
+            },
             "volume": {
                 "row": null,
                 "col": null,
